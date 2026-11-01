@@ -1,0 +1,35 @@
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression, Lasso
+from sklearn.metrics import r2_score
+
+data = pd.read_csv("california_housing.csv")
+
+X = data.drop("MedHouseVal", axis=1)
+y = data["MedHouseVal"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+linear_pred_train = model.predict(X_train)
+linear_pred_test = model.predict(X_test)
+
+print("Linear Train R2:", r2_score(y_train, linear_pred_train))
+print("Linear Test R2:", r2_score(y_test, linear_pred_test))
+
+lasso = Lasso(alpha=0.1, max_iter=10000)
+lasso.fit(X_train, y_train)
+
+lasso_pred_train = lasso.predict(X_train)
+lasso_pred_test = lasso.predict(X_test)
+
+print("Lasso Train R2:", r2_score(y_train, lasso_pred_train))
+print("Lasso Test R2:", r2_score(y_test, lasso_pred_test))
+print("Lasso Coefficients:", lasso.coef_)
+print("Selected Features:", (lasso.coef_ != 0).sum())
+

@@ -1,0 +1,32 @@
+```python
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+
+data = pd.read_csv("titanic_practical1.csv")
+
+print("Missing values before preprocessing:")
+print(data.isnull().sum())
+
+data = data.drop_duplicates()
+
+data = data[["Age", "Fare", "Sex", "Embarked", "Survived"]].copy()
+
+data["Age"] = data["Age"].fillna(data["Age"].median())
+data["Embarked"] = data["Embarked"].fillna(data["Embarked"].mode()[0])
+
+X = data.drop("Survived", axis=1)
+y = data["Survived"]
+
+X = pd.get_dummies(X, columns=["Sex", "Embarked"], dtype=int)
+
+scaler = StandardScaler()
+X[["Age", "Fare"]] = scaler.fit_transform(X[["Age", "Fare"]])
+
+print("\nFinal Model-Ready Dataset:")
+print(X.head())
+
+print("\nMissing values after preprocessing:")
+print(X.isnull().sum())
+
+print("\nFinal Shape:", X.shape)
+```
